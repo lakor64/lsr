@@ -1,0 +1,35 @@
+wsl.exe
+--------------------------------------------------------
+https://dl.acm.org/doi/pdf/10.1145/3538969.3544439
+
+wsl.exe entrypoint:
+CoCreateInstance IWslClient:
+    CLSID: 615a13be_241d_48b1_89b0_8e1d40ffd287
+    IID: 91a11d73_fc34_455c_861f_0a371e4b56ae
+
+Try to run IWslClient::Main arguments:
+    WSL_CLIENT_MODULE_MAIN, CommandLine
+
+If this method does not return S_OK then we are in an installer phase, so:
+Parse the command line to something that IWslInstaller like
+    CreateInstance IWSLInstaller:
+    CLSID: 3bf39b72_0fab_440f_9bcf_1f7fed0fe037
+    IID: 0e2742ce_46f5_4c4d_9977_33e89cda2508
+Process IWslInstaller with arguments (along with an InstallEventCallback)
+
+If the WslInstaller command line returns HR 0x800702E4 in this case:
+Simply rerun wsl.exe as admin (tecnically ms doesn't rerun it but it forwards with runas)
+
+Argument
+--pseudoconsole:
+Create a pseudoconsole and relaunch the process wsl.exe
+
+Parse the command line and execute
+WslInstaller::InstallWsl(install options, callback and 2)
+
+WSL.exe has a feature reporting stage but we don't care honetly...
+
+Installer Callback:
+It's a class that Inherated from IWslInstallEventCallback
+
+wsl.exe DOES NOT implement the main WSL runtime installer or launcher
