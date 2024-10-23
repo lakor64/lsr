@@ -1,0 +1,69 @@
+/*
+ * PROJECT:     MiniPSX Subsystem for Linux API
+ * LICENSE:     MIT (https://spdx.org/licenses/MIT)
+ * PURPOSE:     Userland API Interface
+ * COPYRIGHT:   Copyright 2024 Christian Rendina <pizzaiolo100@proton.me>
+ */
+import "oaidl.idl";
+import "ocidl.idl";
+
+typedef struct _WSL_INSTALL_OPTIONS
+{
+	LPCWSTR DistributionName;
+	BOOL ListDistributions;
+	BOOL DisableInbox;
+	BOOL EnableDistribution;
+	BOOL DisablePostReboot;
+	BOOL DisableWebDownload;
+	BOOL Unknown;
+} WSL_INSTALL_OPTIONS, *PWSL_INSTALL_OPTIONS;
+
+typedef enum _WSL_INSTALL_EVENTINFO_LEVEL
+{
+	// TODO: Discover this better...
+	WSL_INSTALL_EVENTINFO_LEVEL_NORMAL = 2,
+} WSL_INSTALL_EVENTINFO_LEVEL;
+
+[
+	object,
+	local,
+	uuid(56b0cffa-e7d8-46a6-a53e-30b5b74a6cad)
+]
+interface IWSLInstallEventCallback : IUnknown
+{
+	void OnWslInstallEventInfo(
+		[in] LPWSTR Status
+	);
+
+	void OnWslInstallProgress(
+		[in] UINT CurrentProgress,
+		[in] UINT TotalProgress
+	);
+
+	void OnWslInstallComplete(
+		[in] HRESULT Result
+	);
+};
+
+[
+	object,
+	uuid(0e2742ce-46f5-4c4d-9977-33e89cda2508)
+]
+interface IWSLInstaller : IUnknown
+{
+	HRESULT InstallWsl(
+		[in] PWSL_INSTALL_OPTIONS Options,
+		[in] IWSLInstallEventCallback* Callback,
+		[in] WSL_INSTALL_EVENTINFO_LEVEL Level
+	);
+};
+
+[
+	uuid(4664a5cc-76e0-4b47-9b71-9bf452d6343c),
+	version(1.0),
+]
+library WSLApi
+{
+	importlib("stdole2.tlb");
+};
+

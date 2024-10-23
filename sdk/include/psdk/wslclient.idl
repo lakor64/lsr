@@ -1,0 +1,40 @@
+/*
+ * PROJECT:     MiniPSX Subsystem for Linux Client
+ * LICENSE:     MIT (https://spdx.org/licenses/MIT)
+ * PURPOSE:     Client Interface
+ * COPYRIGHT:   Copyright 2024 Christian Rendina <pizzaiolo100@proton.me>
+*/
+import "oaidl.idl";
+import "ocidl.idl";
+
+typedef enum _WSL_CLIENT_MODULES
+{
+	WSL_CLIENT_MODULE_BASH = 0,
+	WSL_CLIENT_MODULE_MAIN = 1,
+	WSL_CLIENT_MODULE_CONFIG = 2,
+	WSL_CLIENT_MODULE_HOST = 3,
+} WSL_CLIENT_MODULES;
+
+[
+	object,
+	local,
+	uuid(91a11d73-fc34-455c-861f-0a371e4b56ae)
+]
+interface IWSLClient : IUnknown
+{
+	HRESULT Main(
+		[in] WSL_CLIENT_MODULES Module,
+		[in] LPCWSTR lpCommandLine,
+		[out] LPDWORD OutStatus
+	);
+};
+
+[
+	uuid(615a13be-241d-48b1-89b0-8e1d40ffd287),
+	version(1.0),
+]
+library WSLClient
+{
+	importlib("stdole2.tlb");
+};
+
